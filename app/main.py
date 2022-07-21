@@ -14,6 +14,10 @@ app = FastAPI()
 @app.on_event("startup")
 async def database_connect():
     await database.connect()
+
+#    query = "DROP TABLE Customer"
+#    await database.execute(query=query)
+
     query = """CREATE TABLE IF NOT EXISTS Customer 
     (id INTEGER PRIMARY KEY, ssn VARCHAR(100), first VARCHAR(100), last VARCHAR(100), address VARCHAR(100), 
     assessed_income INTEGER, balance_of_debt INTEGER, complaints INTEGER)"""
