@@ -1,4 +1,4 @@
-import credit_data_stub
+import customer_lookup
 from typing import Optional
 
 from fastapi import FastAPI
@@ -33,8 +33,8 @@ async def ping():
     rows = await database.fetch_all(query=query)
     return {"rows": rows}
 
-#http://127.0.0.1:8000/credit-data/424-11-9327 for now
+#http://127.0.0.1:8000/credit-data/424-11-9327
 @app.get("/credit-data/{ssn}")
 async def credit_data(ssn):
-    data = await credit_data_stub.get2(ssn)
+    data = await customer_lookup.get2(ssn)
     return data
