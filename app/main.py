@@ -1,9 +1,9 @@
 import customer_lookup
 from typing import Optional
-
 from fastapi import FastAPI
-
 from databases import Database
+from rest_client import RestClient
+from db_client import DatabaseClient
 
 database = Database("sqlite:///app.db")
 
@@ -29,12 +29,15 @@ async def database_disconnect():
 
 @app.get("/ping")
 async def ping():
-    query = "SELECT name,score FROM HighScores"
-    rows = await database.fetch_all(query=query)
-    return {"rows": rows}
+    return "ping success"
 
 #http://127.0.0.1:8000/credit-data/424-11-9327
 @app.get("/credit-data/{ssn}")
 async def credit_data(ssn):
-    data = await customer_lookup.get2(ssn)
-    return data
+    rest_client = RestClient(logger = None)
+    db_client = DatabaseClient(logger = None)
+    data = await customer_lookup.get(ssn, db_client, rest_client)
+    if data:
+        return data
+    else:    
+        return "None found"

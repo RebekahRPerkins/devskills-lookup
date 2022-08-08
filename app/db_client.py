@@ -1,24 +1,29 @@
 from databases import Database
 
-database = Database("sqlite:///app.db")
+class DatabaseClient:
+	database = Database("sqlite:///app.db")
+	select_query = "SELECT * FROM Customer WHERE ssn = '%s'"
 
-async def insert(ssn, customer):
-	await database.connect()
+	def __init__(
+		self,
+		logger
+	):
+		self.logger = None
 
-	query = "INSERT INTO Customer(ssn, first, last, address, assessed_income, balance_of_debt, complaints) VALUES (:ssn, :first, :last, :address, :assessed_income, :balance_of_debt, :complaints)"
-	values = [
-		{"ssn": ssn, "first": customer['first_name'], "last": customer['last_name'], "address": customer['address'], "assessed_income": customer['assessed_income'], "balance_of_debt": customer['balance_of_debt'], "complaints": customer['complaints']}
-	]
-	await database.execute_many(query=query, values=values)
+	async def insert(self, ssn, customer):
+		await self.database.connect()
 
-async def get1(s):
- 	await database.connect()
+		query = "INSERT INTO Customer(ssn, first, last, address, assessed_income, balance_of_debt, complaints) VALUES (:ssn, :first, :last, :address, :assessed_income, :balance_of_debt, :complaints)"
+		values = [
+			{"ssn": ssn, "first": customer['first_name'], "last": customer['last_name'], "address": customer['address'], "assessed_income": customer['assessed_income'], "balance_of_debt": customer['balance_of_debt'], "complaints": customer['complaints']}
+		]
+		await self.database.execute_many(query=query, values=values)
 
- 	query = "SELECT * FROM Customer WHERE ssn = '%s'" % s
- 	print(query)
+	async def get(self, s):
+	 	await self.database.connect()
 
- 	rows = await database.fetch_all(query=query)
+	 	query = self.select_query % s
+	 	
+	 	rows = await self.database.fetch_all(query=query)
 
- 	return rows
-
-
+	 	return rows
